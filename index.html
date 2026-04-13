@@ -44,7 +44,7 @@ canvas { display: block; width: 100%; max-width: 800px; aspect-ratio: 800 / 560;
   body { align-items: flex-start; padding-top: env(safe-area-inset-top, 10px); }
   #wrap { padding: 8px; gap: 10px; height: 100%; justify-content: flex-start; }
   #ctrl { display: none; }
-  #mobile-ctrl { display: flex; align-items: flex-end; }
+  #mobile-ctrl.active { display: flex; align-items: flex-end; }
   #hud { font-size: 13px; padding: 10px 15px; gap: 6px; border-radius: 14px; flex-wrap: wrap; justify-content: center; }
   #hud span { margin: 0 6px; }
   .lvl-grid { grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 15px 0; padding: 10px; }
@@ -415,6 +415,7 @@ function loadLv(idx) {
   st = 'play';
   document.getElementById('menu').classList.add('hidden');
   document.getElementById('win').classList.add('hidden');
+  document.getElementById('mobile-ctrl').classList.add('active');
 }
 
 function resetLv() {
@@ -422,6 +423,7 @@ function resetLv() {
     lives = 3; st = 'menu';
     mkBtns();
     document.getElementById('menu').classList.remove('hidden');
+    document.getElementById('mobile-ctrl').classList.remove('active');
     return;
   }
   loadLv(curLv);
@@ -616,6 +618,7 @@ function winLv() {
     '金币:' + coinGot + ' | 钥匙:' + keyGot + ' | 障碍物:' + oCnt + '/' + LVS[curLv].obs + ' | 时间:' + t + '秒';
   document.getElementById('nextBtn').textContent = last ? '重新开始' : '下一关';
   document.getElementById('win').classList.remove('hidden');
+  document.getElementById('mobile-ctrl').classList.remove('active');
   st = 'win';
 }
 
