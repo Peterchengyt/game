@@ -6,67 +6,74 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>小火人闯关</title>
 <style>
+
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-body { background: #0a0a1a; background-image: radial-gradient(circle at center, #1a1a3a 0%, #050510 100%); display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-#wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; max-width: 800px; padding: 10px; }
-canvas { display: block; width: 100%; max-width: 800px; aspect-ratio: 800 / 560; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(255,140,0,0.3); background: #111; }
-#hud { display: flex; gap: 10px; padding: 12px 24px; background: rgba(15, 15, 30, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; color: #fff; font-size: 15px; width: 100%; max-width: 800px; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-#hud b { color: #ffd54f; text-shadow: 0 0 8px rgba(255,213,79,0.4); }
-#hud .red { color: #ff5252; text-shadow: 0 0 8px rgba(255,82,82,0.4); }
-#hud .green { color: #69f0ae; text-shadow: 0 0 8px rgba(105,240,174,0.4); }
-#ctrl { color: rgba(255,255,255,0.4); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+body { background: #05050a; background-image: radial-gradient(circle at center, #15152a 0%, #020205 100%); display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; color: #fff; }
+#wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; max-width: 840px; padding: 15px; }
+canvas { display: block; width: 100%; max-width: 800px; aspect-ratio: 800 / 560; border-radius: 16px; box-shadow: 0 15px 50px rgba(0,0,0,0.9), 0 0 30px rgba(255,100,0,0.2); background: #0a0a0f; border: 1px solid rgba(255,255,255,0.05); }
+#hud { display: flex; gap: 15px; padding: 14px 28px; background: rgba(20, 20, 35, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; font-size: 16px; width: 100%; max-width: 800px; justify-content: space-between; box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+#hud span { display: flex; align-items: center; gap: 6px; font-weight: 500; }
+#hud b { color: #ffca28; text-shadow: 0 0 10px rgba(255,202,40,0.5); font-size: 18px; }
+#hud .red { color: #ff5252; text-shadow: 0 0 10px rgba(255,82,82,0.5); }
+#hud .green { color: #69f0ae; text-shadow: 0 0 10px rgba(105,240,174,0.5); }
+#ctrl { color: rgba(255,255,255,0.3); font-size: 13px; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
 #game-container { position: relative; width: 100%; max-width: 800px; display: flex; justify-content: center; }
-#menu, #win { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,15,0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; border-radius: 12px; opacity: 1; transition: opacity 0.3s ease, visibility 0.3s ease; }
-#menu.hidden, #win.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-#menu h1 { font-size: clamp(36px, 6vw, 54px); letter-spacing: 4px; background: linear-gradient(135deg, #ff9a44, #fc6076); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 15px rgba(255,140,0,0.5)); margin-bottom: 5px; }
-#menu p { color: rgba(255,255,255,0.6); font-size: 12px; letter-spacing: 6px; text-transform: uppercase; }
-.btn { background: linear-gradient(135deg, #ff7e5f, #feb47b); color: #fff; border: none; padding: 14px 48px; font-size: 16px; font-weight: 800; letter-spacing: 2px; cursor: pointer; border-radius: 30px; box-shadow: 0 6px 20px rgba(255,126,95,0.4); transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); text-transform: uppercase; }
-.btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 25px rgba(255,126,95,0.6); }
-.btn:active { transform: translateY(1px); box-shadow: 0 2px 10px rgba(255,126,95,0.4); }
-.lvl-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 500px; margin: 15px 0; }
-.lvl-btn { width: 56px; height: 56px; border: 2px solid rgba(255,213,79,0.3); background: rgba(255,255,255,0.05); color: #ffd54f; font-size: 22px; font-weight: 800; cursor: pointer; border-radius: 14px; transition: all 0.2s ease; backdrop-filter: blur(4px); }
-.lvl-btn:hover, .lvl-btn.active { border-color: #ffca28; background: rgba(255,202,40,0.2); box-shadow: 0 0 20px rgba(255,202,40,0.4); transform: translateY(-3px); }
-.lvl-btn.locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(100%); border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); }
-.lvl-btn.locked:hover { transform: none; box-shadow: none; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
-#win h2 { color: #ffd54f; font-size: clamp(32px, 5vw, 42px); letter-spacing: 4px; text-shadow: 0 0 20px rgba(255,213,79,0.5); margin-bottom: 10px; }
-#win p { color: rgba(255,255,255,0.8); font-size: 16px; padding: 15px 25px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
-#mobile-ctrl { display: none; position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 20px; justify-content: space-between; pointer-events: none; z-index: 50; }
-#joystick-zone { width: 120px; height: 120px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.15); border-radius: 50%; position: relative; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); touch-action: none; pointer-events: auto; }
-#joystick-knob { width: 50px; height: 50px; background: linear-gradient(135deg, rgba(255,126,95,0.8), rgba(254,180,123,0.8)); border-radius: 50%; position: absolute; box-shadow: 0 4px 10px rgba(0,0,0,0.3); pointer-events: none; transition: transform 0.05s linear; }
-.action-btn { width: 80px; height: 80px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: rgba(255,255,255,0.9); font-size: 32px; font-weight: bold; user-select: none; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); -webkit-tap-highlight-color: transparent; transition: all 0.1s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); touch-action: none; pointer-events: auto; }
-.action-btn:active, .action-btn.active { background: rgba(255,213,79,0.3); border-color: rgba(255,213,79,0.6); color: #ffd54f; transform: scale(0.92); box-shadow: 0 0 20px rgba(255,213,79,0.4); }
+#menu, #win { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,5,12,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 20px; border-radius: 16px; opacity: 1; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 100; }
+#menu.hidden, #win.hidden { opacity: 0; visibility: hidden; transform: scale(1.05); pointer-events: none; }
+#menu h1 { font-size: clamp(40px, 7vw, 64px); font-weight: 900; letter-spacing: 6px; background: linear-gradient(135deg, #ff7e5f, #feb47b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 20px rgba(255,126,95,0.6)); margin-bottom: 0; }
+#menu p.subtitle { color: rgba(255,255,255,0.7); font-size: 14px; letter-spacing: 8px; text-transform: uppercase; font-weight: 600; }
+#menu p.desc { margin-top: 10px; color: #ff5252; font-size: 13px; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,82,82,0.4); background: rgba(255,82,82,0.1); padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(255,82,82,0.2); }
+.btn { background: linear-gradient(135deg, #ff7e5f, #feb47b); color: #fff; border: none; padding: 16px 54px; font-size: 18px; font-weight: 800; letter-spacing: 3px; cursor: pointer; border-radius: 40px; box-shadow: 0 8px 25px rgba(255,126,95,0.5); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); text-transform: uppercase; position: relative; overflow: hidden; }
+.btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); transition: 0.5s; }
+.btn:hover::after { left: 150%; }
+.btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 12px 30px rgba(255,126,95,0.7); }
+.btn:active { transform: translateY(2px); box-shadow: 0 4px 15px rgba(255,126,95,0.4); }
+.lvl-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; justify-content: center; max-width: 700px; margin: 20px 0; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+.lvl-btn { width: 48px; height: 48px; border: 2px solid rgba(255,202,40,0.4); background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); color: #ffca28; font-size: 20px; font-weight: 800; cursor: pointer; border-radius: 14px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(4px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+.lvl-btn:hover, .lvl-btn.active { border-color: #ffca28; background: linear-gradient(135deg, rgba(255,202,40,0.3), rgba(255,202,40,0.1)); box-shadow: 0 0 25px rgba(255,202,40,0.5); transform: translateY(-4px) scale(1.05); color: #fff; }
+.lvl-btn.locked { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); background: rgba(0,0,0,0.2); box-shadow: none; }
+.lvl-btn.locked:hover { transform: none; box-shadow: none; background: rgba(0,0,0,0.2); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); }
+#win h2 { color: #ffca28; font-size: clamp(36px, 6vw, 48px); font-weight: 900; letter-spacing: 6px; text-shadow: 0 0 30px rgba(255,202,40,0.6); margin-bottom: 15px; }
+#win p { color: rgba(255,255,255,0.9); font-size: 18px; padding: 20px 35px; background: rgba(0,0,0,0.5); border-radius: 16px; border: 1px solid rgba(255,255,255,0.15); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); letter-spacing: 1px; line-height: 1.6; }
+#mobile-ctrl { display: none; position: fixed; bottom: 30px; left: 0; width: 100%; padding: 0 40px; justify-content: space-between; pointer-events: none; z-index: 999; }
+#joystick-zone { width: 140px; height: 140px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.15) 100%); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; position: relative; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); touch-action: none; pointer-events: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.1); }
+#joystick-knob { width: 60px; height: 60px; background: linear-gradient(135deg, #ff7e5f, #feb47b); border-radius: 50%; position: absolute; box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 2px 5px rgba(255,255,255,0.5); pointer-events: none; transition: transform 0.05s linear; border: 2px solid rgba(255,255,255,0.3); }
+.action-btn { width: 90px; height: 90px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.2) 100%); border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 36px; font-weight: 900; user-select: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); -webkit-tap-highlight-color: transparent; transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.4), inset 0 0 20px rgba(255,255,255,0.1); touch-action: none; pointer-events: auto; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+.action-btn:active, .action-btn.active { background: linear-gradient(135deg, rgba(255,202,40,0.4), rgba(255,202,40,0.2)); border-color: #ffca28; color: #fff; transform: scale(0.9); box-shadow: 0 0 30px rgba(255,202,40,0.6), inset 0 0 15px rgba(255,202,40,0.4); text-shadow: 0 0 10px rgba(255,255,255,0.8); }
 @media (max-width: 850px) { 
   body { align-items: flex-start; padding-top: env(safe-area-inset-top, 10px); }
-  #wrap { padding: 5px; gap: 8px; height: 100%; justify-content: flex-start; }
+  #wrap { padding: 8px; gap: 10px; height: 100%; justify-content: flex-start; }
   #ctrl { display: none; }
-  #mobile-ctrl { display: flex; align-items: flex-end; bottom: max(20px, env(safe-area-inset-bottom, 20px)); padding: 0 30px; }
-  #hud { font-size: 12px; padding: 8px 12px; gap: 4px; border-radius: 10px; flex-wrap: wrap; justify-content: center; }
-  #hud span { white-space: nowrap; margin: 0 4px; }
-  .lvl-grid { gap: 8px; margin: 10px 0; }
-  .lvl-btn { width: 44px; height: 44px; font-size: 18px; border-radius: 10px; }
-  #menu h1 { font-size: 32px; letter-spacing: 2px; }
-  #menu p { font-size: 10px; }
-  .btn { padding: 12px 36px; font-size: 14px; }
+  #mobile-ctrl { display: flex; align-items: flex-end; }
+  #hud { font-size: 13px; padding: 10px 15px; gap: 6px; border-radius: 14px; flex-wrap: wrap; justify-content: center; }
+  #hud span { margin: 0 6px; }
+  .lvl-grid { grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 15px 0; padding: 10px; }
+  .lvl-btn { width: 42px; height: 42px; font-size: 16px; border-radius: 12px; }
+  #menu h1 { font-size: 36px; letter-spacing: 3px; }
+  #menu p.subtitle { font-size: 11px; letter-spacing: 4px; }
+  .btn { padding: 14px 40px; font-size: 16px; }
   #game-container { max-width: 100vw; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-  canvas { border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.6); max-height: 55vh; width: auto; max-width: 100%; object-fit: contain; }
+  canvas { border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,0.7); max-height: 50vh; width: auto; max-width: 100%; object-fit: contain; }
 }
 @media (max-width: 850px) and (orientation: landscape) {
   body { align-items: center; padding-top: 0; }
-  #wrap { flex-direction: row; justify-content: center; gap: 10px; padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 10px) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 10px); }
-  #hud { flex-direction: column; width: auto; max-width: 120px; gap: 8px; padding: 15px 10px; align-items: flex-start; }
+  #wrap { flex-direction: row; justify-content: center; gap: 15px; padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 15px) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 15px); }
+  #hud { flex-direction: column; width: auto; max-width: 140px; gap: 12px; padding: 20px 15px; align-items: flex-start; }
   #hud span { margin: 0; }
-  canvas { max-height: 85vh; max-width: calc(100vw - 140px); }
-  #mobile-ctrl { bottom: 15px; padding: 0 25px; }
-  .action-btn { width: 65px; height: 65px; font-size: 26px; }
-  #joystick-zone { width: 100px; height: 100px; }
-  #joystick-knob { width: 40px; height: 40px; }
+  canvas { max-height: 85vh; max-width: calc(100vw - 160px); }
+  #mobile-ctrl { bottom: 20px; padding: 0 30px; }
+  .action-btn { width: 75px; height: 75px; font-size: 30px; }
+  #joystick-zone { width: 110px; height: 110px; }
+  #joystick-knob { width: 45px; height: 45px; }
+  .lvl-grid { grid-template-columns: repeat(10, 1fr); }
 }
+
 </style>
 </head>
 <body>
 <div id="wrap">
   <div id="hud">
-    <span>关卡 <b id="hLv">1</b>/12</span>
+    <span>关卡 <b id="hLv">1</b>/30</span>
     <span>🔑 <b id="hKey">0</b>/<b id="hKeyN">0</b></span>
     <span>⭐ <b id="hCoin">0</b></span>
     <span>💀 <b class="red" id="hLife">3</b></span>
@@ -83,11 +90,11 @@ canvas { display: block; width: 100%; max-width: 800px; aspect-ratio: 800 / 560;
     </div>
     <div id="menu">
       <h1>小火人闯关</h1>
-      <p>LITTLE FIREMAN ADVENTURE</p>
-      <p style="margin-top:6px;color:rgba(255,255,255,0.4);font-size:11px;">☠ 地狱难度 ☠ 动态障碍物 + 极限速度</p>
+      <p class="subtitle">LITTLE FIREMAN ADVENTURE</p>
+      <p class="desc">☠ 地狱难度 ☠ 动态障碍物 + 极限速度</p>
       <div class="lvl-grid" id="lvls"></div>
       <button class="btn" id="startBtn">开始挑战</button>
-      <p style="margin-top:10px;font-size:11px;color:rgba(255,255,255,0.3)"/p>
+      <p style="margin-top:15px;font-size:12px;color:rgba(255,255,255,0.3);letter-spacing:1px;">
     </div>
     <div id="win" class="hidden">
       <h2 id="wTitle">过关!</h2>
@@ -104,31 +111,43 @@ var C = document.getElementById('c');
 var X = C.getContext('2d');
 var W = 800, H = 560, T = 40, COLS = 20, ROWS = 14;
 
-// 12关地狱难度
-var LVS = [
-  {name:'地狱入口',keys:0,en:[{x:8,y:13,mn:4,mx:16,sp:20}]},
-  {name:'死亡通道',keys:1,en:[{x:6,y:13,mn:3,mx:13,sp:24}]},
-  {name:'闪电地狱',keys:0,en:[{x:5,y:13,mn:3,mx:10,sp:28},{x:14,y:13,mn:11,mx:18,sp:30}]},
-  {name:'敌人围攻',keys:0,en:[{x:4,y:13,mn:2,mx:8,sp:34},{x:10,y:13,mn:8,mx:14,sp:36},{x:16,y:13,mn:14,mx:19,sp:38}]},
-  {name:'岩浆炼狱',keys:0,en:[{x:6,y:13,mn:4,mx:12,sp:42},{x:15,y:13,mn:12,mx:19,sp:44}]},
-  {name:'钥匙迷宫',keys:1,en:[{x:5,y:13,mn:3,mx:10,sp:48},{x:14,y:13,mn:10,mx:18,sp:50}]},
-  {name:'高空危机',keys:0,en:[{x:4,y:13,mn:2,mx:9,sp:52},{x:11,y:13,mn:9,mx:16,sp:54},{x:8,y:9,mn:6,mx:12,sp:46}]},
-  {name:'敌军基地',keys:0,en:[{x:3,y:13,mn:2,mx:7,sp:56},{x:9,y:13,mn:7,mx:13,sp:58},{x:15,y:13,mn:13,mx:19,sp:60},{x:7,y:9,mn:5,mx:11,sp:50}]},
-  {name:'双钥试炼',keys:2,en:[{x:5,y:13,mn:3,mx:10,sp:62},{x:12,y:13,mn:10,mx:17,sp:64}]},
-  {name:'极限跳跃',keys:0,en:[{x:4,y:13,mn:2,mx:8,sp:66},{x:10,y:13,mn:8,mx:14,sp:68},{x:16,y:13,mn:14,mx:19,sp:70}]},
-  {name:'断崖高塔',keys:1,en:[{x:4,y:13,mn:2,mx:9,sp:72},{x:13,y:13,mn:10,mx:18,sp:74},{x:8,y:9,mn:6,mx:12,sp:60}],gap:true},
-  {name:'最终试炼',keys:2,en:[{x:3,y:13,mn:2,mx:6,sp:76},{x:8,y:13,mn:6,mx:11,sp:78},{x:13,y:13,mn:11,mx:16,sp:80},{x:17,y:13,mn:15,mx:19,sp:82},{x:7,y:9,mn:5,mx:12,sp:70}]}
-];
-
-// 障碍物数量：第N关 = 20 + (N-1) * 10
-function getObsCount(idx) {
-  return 20 + idx * 10;
+// 30关地狱难度
+var LVS = [];
+var baseNames = ['地狱入口', '死亡通道', '闪电地狱', '敌人围攻', '岩浆炼狱', '钥匙迷宫', '高空危机', '敌军基地', '双钥试炼', '极限跳跃', '断崖高塔', '最终试炼'];
+for (var i = 0; i < 30; i++) {
+  var name = i < 12 ? baseNames[i] : '深渊第' + (i - 11) + '层';
+  var keys = Math.floor(i / 5); // 每5关增加一把钥匙需求，最多5把
+  if (keys > 3) keys = 3;
+  
+  var en = [];
+  var enCount = 1 + Math.floor(i / 4); // 敌人数量随关卡增加
+  if (enCount > 5) enCount = 5;
+  
+  for (var j = 0; j < enCount; j++) {
+    var ex = 3 + (j * 3) % 14;
+    var ey = 13;
+    if (j % 2 === 1 && i > 5) ey = 9; // 部分敌人在高台
+    var sp = 20 + i * 3 + j * 2; // 速度随关卡增加
+    en.push({x: ex, y: ey, mn: Math.max(2, ex - 2), mx: Math.min(19, ex + 4), sp: sp});
+  }
+  
+  LVS.push({
+    name: name,
+    keys: keys,
+    en: en,
+    gap: i % 3 === 2 // 每3关出现一次断崖
+  });
 }
 
-// 障碍物弹出间隔：第1关1.5秒，每关递减0.15秒，最低0.3秒
+// 障碍物数量：第N关 = 15 + N * 5
+function getObsCount(idx) {
+  return 15 + idx * 5;
+}
+
+// 障碍物弹出间隔：第1关1.5秒，每关递减0.05秒，最低0.2秒
 function getObsInterval(idx) {
-  var interval = 1500 - idx * 150;
-  return Math.max(300, interval);
+  var interval = 1500 - idx * 50;
+  return Math.max(200, interval);
 }
 
 // 生成地图
