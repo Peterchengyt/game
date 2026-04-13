@@ -2,6 +2,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<!-- 就是下面这一行，非常重要！它告诉手机：屏幕多宽视口就多宽，不要用电脑版的 980px 去模拟 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>小火人闯关</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
@@ -29,12 +31,9 @@ canvas { display: block; width: 100%; max-width: 800px; aspect-ratio: 800 / 560;
 #win h2 { color: #ffd54f; font-size: clamp(32px, 5vw, 42px); letter-spacing: 4px; text-shadow: 0 0 20px rgba(255,213,79,0.5); margin-bottom: 10px; }
 #win p { color: rgba(255,255,255,0.8); font-size: 16px; padding: 15px 25px; background: rgba(0,0,0,0.4); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); }
 #mobile-ctrl { display: none; position: absolute; bottom: 20px; left: 0; width: 100%; padding: 0 20px; justify-content: space-between; pointer-events: none; z-index: 50; }
-.ctrl-group { display: flex; gap: 15px; pointer-events: auto; }
-.m-btn { width: 65px; height: 65px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: rgba(255,255,255,0.8); font-size: 28px; font-weight: bold; user-select: none; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); -webkit-tap-highlight-color: transparent; transition: background 0.1s, transform 0.1s; }
-.m-btn:active, .m-btn.active { background: rgba(255,213,79,0.3); border-color: rgba(255,213,79,0.6); color: #ffd54f; transform: scale(0.92); }
-#joystick-zone { width: 120px; height: 120px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.15); border-radius: 50%; position: relative; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); touch-action: none; }
+#joystick-zone { width: 120px; height: 120px; background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.15); border-radius: 50%; position: relative; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); touch-action: none; pointer-events: auto; }
 #joystick-knob { width: 50px; height: 50px; background: linear-gradient(135deg, rgba(255,126,95,0.8), rgba(254,180,123,0.8)); border-radius: 50%; position: absolute; box-shadow: 0 4px 10px rgba(0,0,0,0.3); pointer-events: none; transition: transform 0.05s linear; }
-.action-btn { width: 80px; height: 80px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: rgba(255,255,255,0.9); font-size: 32px; font-weight: bold; user-select: none; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); -webkit-tap-highlight-color: transparent; transition: all 0.1s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); touch-action: none; }
+.action-btn { width: 80px; height: 80px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: rgba(255,255,255,0.9); font-size: 32px; font-weight: bold; user-select: none; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); -webkit-tap-highlight-color: transparent; transition: all 0.1s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); touch-action: none; pointer-events: auto; }
 .action-btn:active, .action-btn.active { background: rgba(255,213,79,0.3); border-color: rgba(255,213,79,0.6); color: #ffd54f; transform: scale(0.92); box-shadow: 0 0 20px rgba(255,213,79,0.4); }
 @media (max-width: 850px) { 
   body { align-items: flex-start; padding-top: env(safe-area-inset-top, 10px); }
