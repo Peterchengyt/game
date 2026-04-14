@@ -23,12 +23,15 @@ canvas { display: block; width: 100%; max-width: 800px; aspect-ratio: 800 / 560;
 #menu h1 { font-size: clamp(40px, 7vw, 64px); font-weight: 900; letter-spacing: 6px; background: linear-gradient(135deg, #ff7e5f, #feb47b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 4px 20px rgba(255,126,95,0.6)); margin-bottom: 0; }
 #menu p.subtitle { color: rgba(255,255,255,0.7); font-size: 14px; letter-spacing: 8px; text-transform: uppercase; font-weight: 600; }
 #menu p.desc { margin-top: 10px; color: #ff5252; font-size: 13px; font-weight: bold; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,82,82,0.4); background: rgba(255,82,82,0.1); padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(255,82,82,0.2); }
-.btn { background: linear-gradient(135deg, #ff7e5f, #feb47b); color: #fff; border: none; padding: 16px 54px; font-size: 18px; font-weight: 800; letter-spacing: 3px; cursor: pointer; border-radius: 40px; box-shadow: 0 8px 25px rgba(255,126,95,0.5); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); text-transform: uppercase; position: relative; overflow: hidden; }
+.btn { background: linear-gradient(135deg, #ff7e5f, #feb47b); color: #fff; border: none; padding: 16px 54px; font-size: 18px; font-weight: 800; letter-spacing: 3px; cursor: pointer; border-radius: 40px; box-shadow: 0 8px 25px rgba(255,126,95,0.5); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); text-transform: uppercase; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; line-height: 1; }
 .btn::after { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); transition: 0.5s; }
 .btn:hover::after { left: 150%; }
 .btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 12px 30px rgba(255,126,95,0.7); }
 .btn:active { transform: translateY(2px); box-shadow: 0 4px 15px rgba(255,126,95,0.4); }
-.lvl-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; justify-content: center; max-width: 700px; margin: 20px 0; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
+.lvl-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px; justify-content: center; max-width: 700px; margin: 20px 0; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); max-height: 45vh; overflow-y: auto; touch-action: pan-y; overscroll-behavior: contain; }
+.lvl-grid::-webkit-scrollbar { width: 6px; }
+.lvl-grid::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); border-radius: 10px; }
+.lvl-grid::-webkit-scrollbar-thumb { background: rgba(255,202,40,0.5); border-radius: 10px; }
 .lvl-btn { width: 48px; height: 48px; border: 2px solid rgba(255,202,40,0.4); background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); color: #ffca28; font-size: 20px; font-weight: 800; cursor: pointer; border-radius: 14px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(4px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 .lvl-btn:hover, .lvl-btn.active { border-color: #ffca28; background: linear-gradient(135deg, rgba(255,202,40,0.3), rgba(255,202,40,0.1)); box-shadow: 0 0 25px rgba(255,202,40,0.5); transform: translateY(-4px) scale(1.05); color: #fff; }
 .lvl-btn.locked { opacity: 0.4; cursor: not-allowed; filter: grayscale(100%); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); background: rgba(0,0,0,0.2); box-shadow: none; }
@@ -73,7 +76,7 @@ canvas { display: block; width: 100%; max-width: 800px; aspect-ratio: 800 / 560;
 <body>
 <div id="wrap">
   <div id="hud">
-    <span>关卡 <b id="hLv">1</b>/30</span>
+    <span>关卡 <b id="hLv">1</b>/100</span>
     <span>🔑 <b id="hKey">0</b>/<b id="hKeyN">0</b></span>
     <span>⭐ <b id="hCoin">0</b></span>
     <span>💀 <b class="red" id="hLife">3</b></span>
@@ -111,23 +114,21 @@ var C = document.getElementById('c');
 var X = C.getContext('2d');
 var W = 800, H = 560, T = 40, COLS = 20, ROWS = 14;
 
-// 30关地狱难度
+// 100关地狱难度
 var LVS = [];
 var baseNames = ['地狱入口', '死亡通道', '闪电地狱', '敌人围攻', '岩浆炼狱', '钥匙迷宫', '高空危机', '敌军基地', '双钥试炼', '极限跳跃', '断崖高塔', '最终试炼'];
-for (var i = 0; i < 30; i++) {
+for (var i = 0; i < 100; i++) {
   var name = i < 12 ? baseNames[i] : '深渊第' + (i - 11) + '层';
-  var keys = Math.floor(i / 5); // 每5关增加一把钥匙需求，最多5把
-  if (keys > 3) keys = 3;
+  var keys = Math.min(3, Math.floor(i / 8)); // 每8关增加一把钥匙需求，最多3把
   
   var en = [];
-  var enCount = 1 + Math.floor(i / 4); // 敌人数量随关卡增加
-  if (enCount > 5) enCount = 5;
+  var enCount = Math.min(8, 1 + Math.floor(i / 6)); // 敌人数量随关卡增加，最多8个
   
   for (var j = 0; j < enCount; j++) {
     var ex = 3 + (j * 3) % 14;
     var ey = 13;
     if (j % 2 === 1 && i > 5) ey = 9; // 部分敌人在高台
-    var sp = 20 + i * 3 + j * 2; // 速度随关卡增加
+    var sp = Math.min(120, 20 + i * 1.5 + j * 2); // 速度随关卡增加，最高120
     en.push({x: ex, y: ey, mn: Math.max(2, ex - 2), mx: Math.min(19, ex + 4), sp: sp});
   }
   
@@ -139,14 +140,14 @@ for (var i = 0; i < 30; i++) {
   });
 }
 
-// 障碍物数量：第N关 = 15 + N * 5
+// 障碍物数量：第N关 = 15 + N * 3
 function getObsCount(idx) {
-  return 15 + idx * 5;
+  return 15 + idx * 3;
 }
 
-// 障碍物弹出间隔：第1关1.5秒，每关递减0.05秒，最低0.2秒
+// 障碍物弹出间隔：第1关1.5秒，每关递减0.02秒，最低200毫秒
 function getObsInterval(idx) {
-  var interval = 1500 - idx * 50;
+  var interval = 1500 - idx * 20;
   return Math.max(200, interval);
 }
 
@@ -964,7 +965,7 @@ function mkBtns() {
   el.innerHTML = '';
   for (var i = 0; i < LVS.length; i++) {
     var btn = document.createElement('button');
-    btn.className = 'lvl-btn' + (i < unlk ? '' : ' locked');
+    btn.className = 'lvl-btn' + (i < unlk ? '' : ' locked') + (i === curLv ? ' active' : '');
     btn.textContent = i + 1;
     btn.onclick = (function(idx) {
       return function() { if (idx < unlk) curLv = idx; mkBtns(); };
