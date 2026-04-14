@@ -211,24 +211,6 @@ function genMap(lv, idx) {
     }
   }
   
-  // 动态放置钥匙，确保数量正确
-  if (lv.keys > 0) {
-    var keyPositions = [
-      [4, 10], [14, 10], [9, 8], [16, 6], [2, 8]
-    ];
-    var placedKeys = 0;
-    for (var i = 0; i < keyPositions.length && placedKeys < lv.keys; i++) {
-        var kx = keyPositions[i][0];
-        var ky = keyPositions[i][1];
-        // 稍微根据关卡偏移一下钥匙位置
-        kx = (kx + (idx % 3)) % (COLS - 2) + 1;
-        if (m[ky][kx] === 0) {
-            m[ky][kx] = 4;
-            placedKeys++;
-        }
-    }
-  }
-  
   // 放置门
   if (lv.keys > 0) {
     for (var c = 1; c < COLS - 1; c++) {
@@ -263,6 +245,32 @@ function genMap(lv, idx) {
           m[ROWS-3][wx] = 3;
           m[ROWS-3][wx+1] = 3;
       }
+  }
+
+  // 动态放置钥匙，确保数量正确 (放到最后，防止被断崖或墙壁覆盖)
+  if (lv.keys > 0) {
+    var placedKeys = 0;
+    var emptySpots = [];
+    for (var r = 3; r < ROWS - 3; r++) {
+      for (var c = 2; c < COLS - 2; c++) {
+        if (m[r][c] === 0) {
+          emptySpots.push({r: r, c: c});
+        }
+      }
+    }
+    // 随机打乱空地数组
+    for (var i = emptySpots.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = emptySpots[i];
+      emptySpots[i] = emptySpots[j];
+      emptySpots[j] = temp;
+    }
+    // 放置钥匙
+    for (var i = 0; i < emptySpots.length && placedKeys < lv.keys; i++) {
+      var spot = emptySpots[i];
+      m[spot.r][spot.c] = 4;
+      placedKeys++;
+    }
   }
   
   return m;
